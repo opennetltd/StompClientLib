@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "SocketRocket",
+        "repositoryURL": "https://github.com/opennetltd/SocketRocket.git",
+        "state": {
+          "branch": null,
+          "revision": "02d7002641f53848b1d2b29d78b835fa9c3f6e48",
+          "version": "1.0.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

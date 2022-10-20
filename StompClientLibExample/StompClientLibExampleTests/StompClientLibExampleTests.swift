@@ -6,7 +6,6 @@
 //
 
 import XCTest
-@testable import StompClientLibExample
 
 class StompClientLibExampleTests: XCTestCase {
 

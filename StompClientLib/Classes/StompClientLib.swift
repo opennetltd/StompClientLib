@@ -61,7 +61,7 @@ public enum StompAckMode {
 
 // Fundamental Protocols
 @objc
-public protocol StompClientLibDelegate: class {
+public protocol StompClientLibDelegate: AnyObject {
     func stompClient(client: StompClientLib!, didReceiveMessageWithJSONBody jsonBody: AnyObject?, akaStringBody stringBody: String?, withHeader header:[String:String]?, withDestination destination: String)
     
     func stompClientDidDisconnect(client: StompClientLib!)
@@ -196,22 +196,22 @@ public class StompClientLib: NSObject, SRWebSocketDelegate {
         }
     }
     
-    public func webSocketDidOpen(_ webSocket: SRWebSocket!) {
+    public func webSocketDidOpen(_ webSocket: SRWebSocket) {
         print("WebSocket is connected")
         connect()
     }
     
-    public func webSocket(_ webSocket: SRWebSocket!, didFailWithError error: Error!) {
+    public func webSocket(_ webSocket: SRWebSocket, didFailWithError error: Error) {
         print("didFailWithError: \(String(describing: error))")
         
         if let delegate = delegate {
             DispatchQueue.main.async(execute: {
-                delegate.serverDidSendError(client: self, withErrorMessage: error.localizedDescription, detailedErrorMessage: error as? String)
+                delegate.serverDidSendError(client: self, withErrorMessage: error.localizedDescription, detailedErrorMessage: error.localizedDescription)
             })
         }
     }
     
-    public func webSocket(_ webSocket: SRWebSocket!, didCloseWithCode code: Int, reason: String!, wasClean: Bool) {
+    public func webSocket(_ webSocket: SRWebSocket, didCloseWithCode code: Int, reason: String?, wasClean: Bool) {
         print("didCloseWithCode \(code), reason: \(String(describing: reason))")
         if let delegate = delegate {
             DispatchQueue.main.async(execute: {
@@ -220,7 +220,7 @@ public class StompClientLib: NSObject, SRWebSocketDelegate {
         }
     }
     
-    public func webSocket(_ webSocket: SRWebSocket!, didReceivePong pongPayload: Data!) {
+    public func webSocket(_ webSocket: SRWebSocket, didReceivePong pongPayload: Data?) {
         print("didReceivePong")
     }
     
