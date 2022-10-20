@@ -22,7 +22,7 @@ let package = Package(
         .target(
             name: "StompClientLib",
             dependencies: ["SocketRocket"],
-            path: "StompClientLib/Classes"),
+            path: "StompClientLib"),
         .testTarget(
             name: "StompClientLibExampleTests",
             dependencies: ["StompClientLib"],
