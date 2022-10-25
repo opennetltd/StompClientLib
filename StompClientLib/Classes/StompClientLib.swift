@@ -61,7 +61,7 @@ public enum StompAckMode {
 
 // Fundamental Protocols
 @objc
-public protocol StompClientLibDelegate: AnyObject {
+public protocol StompClientLibDelegate: class {
     func stompClient(client: StompClientLib!, didReceiveMessageWithJSONBody jsonBody: AnyObject?, akaStringBody stringBody: String?, withHeader header:[String:String]?, withDestination destination: String)
     
     func stompClientDidDisconnect(client: StompClientLib!)
@@ -79,7 +79,7 @@ public class StompClientLib: NSObject, SRWebSocketDelegate {
     var connectionHeaders: [String: String]?
     public var connection: Bool = false
     public var certificateCheckEnabled = true
-    private var urlRequest: NSURLRequest?
+    private var urlRequest: URLRequest?
     
     private var reconnectTimer : Timer?
     
@@ -95,7 +95,7 @@ public class StompClientLib: NSObject, SRWebSocketDelegate {
         }
     }
     
-    public func openSocketWithURLRequest(request: NSURLRequest, delegate: StompClientLibDelegate, connectionHeaders: [String: String]? = nil) {
+    public func openSocketWithURLRequest(request: URLRequest, delegate: StompClientLibDelegate, connectionHeaders: [String: String]? = nil) {
         self.connectionHeaders = connectionHeaders
         self.delegate = delegate
         self.urlRequest = request
@@ -196,22 +196,22 @@ public class StompClientLib: NSObject, SRWebSocketDelegate {
         }
     }
     
-    public func webSocketDidOpen(_ webSocket: SRWebSocket) {
+    public func webSocketDidOpen(_ webSocket: SRWebSocket!) {
         print("WebSocket is connected")
         connect()
     }
     
-    public func webSocket(_ webSocket: SRWebSocket, didFailWithError error: Error) {
+    public func webSocket(_ webSocket: SRWebSocket!, didFailWithError error: Error!) {
         print("didFailWithError: \(String(describing: error))")
         
         if let delegate = delegate {
             DispatchQueue.main.async(execute: {
-                delegate.serverDidSendError(client: self, withErrorMessage: error.localizedDescription, detailedErrorMessage: error.localizedDescription)
+                delegate.serverDidSendError(client: self, withErrorMessage: error.localizedDescription, detailedErrorMessage: error as? String)
             })
         }
     }
     
-    public func webSocket(_ webSocket: SRWebSocket, didCloseWithCode code: Int, reason: String?, wasClean: Bool) {
+    public func webSocket(_ webSocket: SRWebSocket!, didCloseWithCode code: Int, reason: String!, wasClean: Bool) {
         print("didCloseWithCode \(code), reason: \(String(describing: reason))")
         if let delegate = delegate {
             DispatchQueue.main.async(execute: {
@@ -220,7 +220,7 @@ public class StompClientLib: NSObject, SRWebSocketDelegate {
         }
     }
     
-    public func webSocket(_ webSocket: SRWebSocket, didReceivePong pongPayload: Data?) {
+    public func webSocket(_ webSocket: SRWebSocket!, didReceivePong pongPayload: Data!) {
         print("didReceivePong")
     }
     
@@ -399,7 +399,8 @@ public class StompClientLib: NSObject, SRWebSocketDelegate {
     public func subscribeWithHeader(destination: String, withHeader header: [String: String]) {
         var headerToSend = header
         headerToSend[StompCommands.commandHeaderDestination] = destination
-        sendFrame(command: StompCommands.commandSubscribe, header: headerToSend, body: nil)
+        let headers = ["id": "/topic/user.E210714072912puid85478269", "ack": "auto", "destination": "/topic/user.E210714072912puid85478269", "x-queue-name": "user.E210714072912puid85478269"]
+        sendFrame(command: StompCommands.commandSubscribe, header: headers, body: nil)
     }
     
     /*
@@ -457,7 +458,7 @@ public class StompClientLib: NSObject, SRWebSocketDelegate {
     
     // Reconnect after one sec or arg, if reconnect is available
     // TODO: MAKE A VARIABLE TO CHECK RECONNECT OPTION IS AVAILABLE OR NOT
-    public func reconnect(request: NSURLRequest, delegate: StompClientLibDelegate, connectionHeaders: [String: String] = [String: String](), time: Double = 1.0, exponentialBackoff: Bool = true){
+    public func reconnect(request: URLRequest, delegate: StompClientLibDelegate, connectionHeaders: [String: String] = [String: String](), time: Double = 1.0, exponentialBackoff: Bool = true){
         if #available(iOS 10.0, *) {
             reconnectTimer = Timer.scheduledTimer(withTimeInterval: time, repeats: true, block: { _ in
                 self.reconnectLogic(request: request, delegate: delegate
@@ -474,7 +475,7 @@ public class StompClientLib: NSObject, SRWebSocketDelegate {
     //        reconnectLogic(request: request, delegate: delegate, connectionHeaders: connectionHeaders)
     //    }
     
-    private func reconnectLogic(request: NSURLRequest, delegate: StompClientLibDelegate, connectionHeaders: [String: String] = [String: String]()){
+    private func reconnectLogic(request: URLRequest, delegate: StompClientLibDelegate, connectionHeaders: [String: String] = [String: String]()){
         // Check if connection is alive or dead
         if (!self.isConnected()){
             self.checkConnectionHeader(connectionHeaders: connectionHeaders) ? self.openSocketWithURLRequest(request: request, delegate: delegate, connectionHeaders: connectionHeaders) : self.openSocketWithURLRequest(request: request, delegate: delegate)

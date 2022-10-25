@@ -13,7 +13,7 @@ class ViewController: UIViewController, StompClientLibDelegate {
     
     var socketClient = StompClientLib()
     let topic = "/topic/greetings"
-    var url = NSURL()
+   
     @IBOutlet weak var socketButton: UIButton!
     @IBOutlet weak var disconnectButton: UIButton!
     @IBOutlet weak var sendMessageButton: UIButton!
@@ -63,7 +63,9 @@ class ViewController: UIViewController, StompClientLibDelegate {
         // Auto Disconnect after 3 sec
         socketClient.autoDisconnect(time: 3)
         // Reconnect after 4 sec
-        socketClient.reconnect(request: NSURLRequest(url: url as URL) , delegate: self as StompClientLibDelegate, time: 4.0)
+        let url  = "http://localhost:8080/"
+        let urlRequest = URLRequest(url: URL(string: url)!)
+        socketClient.reconnect(request: urlRequest, delegate: self as StompClientLibDelegate, time: 4.0)
  
     }
     
@@ -75,9 +77,8 @@ class ViewController: UIViewController, StompClientLibDelegate {
         let wsURL = baseURL.substring(from:baseURL.index(baseURL.startIndex, offsetBy: 7))
         let completedWSURL = "ws://\(wsURL)hello/websocket"
         
-        
-        url = NSURL(string: completedWSURL)!
-        socketClient.openSocketWithURLRequest(request: NSURLRequest(url: url as URL) , delegate: self as StompClientLibDelegate)
+        let urlRequest = URLRequest(url: URL(string: completedWSURL)!)
+        socketClient.openSocketWithURLRequest(request: urlRequest, delegate: self as StompClientLibDelegate)
     }
     
     func stompClientDidConnect(client: StompClientLib!) {
