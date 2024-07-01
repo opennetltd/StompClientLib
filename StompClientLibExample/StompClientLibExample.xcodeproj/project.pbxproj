@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -620,7 +620,7 @@
 			repositoryURL = "https://github.com/opennetltd/SocketRocket.git";
 			requirement = {
 				kind = exactVersion;
-				version = 1.0.0;
+				version = "1.0.1-SNAPSHOT";
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
